@@ -1,0 +1,25 @@
+{
+  "name": "back-end-todo",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Hikmet-dev/back-end-todo.git"
+  },
+  "author": "Hikmet-dev",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Hikmet-dev/back-end-todo/issues"
+  },
+  "homepage": "https://github.com/Hikmet-dev/back-end-todo#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.7"
+  }
+}
