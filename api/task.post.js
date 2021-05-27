@@ -4,7 +4,7 @@ import path from 'path';
 import { v4 as uuidv4 } from 'uuid';
 
 
-const __dirname = path.resolve()
+const __dirname = path.resolve();
 
 const app = express();
 
@@ -18,14 +18,12 @@ app.use(express.json())
 
 export const POST = (req, res) => {
 
-    let name = req.body.name;
-    let done = req.body.done;
+    let body = req.body;
 
 
     const newElem = {
         id: uuidv4(),
-        name,
-        done,
+        ...body,
         created_at: new Date(Date.now())
     };
 
