@@ -12,12 +12,9 @@ export const PATCH = (req, res) => {
                 if (err) {
                     console.log(err);
                 }
-                console.log(typeof idParam);
         
                 const taskList = JSON.parse(data.toString());
-                console.log(taskList);
                 const index = taskList.findIndex(item => item.id === idParam);
-                console.log(index);
                 const newObjs = {...taskList[index], ...body };
                 taskList[index] = newObjs;
 
