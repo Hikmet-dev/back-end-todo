@@ -1,12 +1,17 @@
-const express = require('express');
+
+import express from 'express';
+
+import router from './router.api.js';
+
 const app = express();
 
-
-const PORT = 3000;
-
-
+import bodyParser from 'body-parser';
+var jsonParser = bodyParser.json()
 
 
-app.use(express.static(__dirname + '/public/'));
+
+const PORT = 3005;
+
+app.use('/api/v1/',jsonParser, router);
 
 app.listen(PORT);

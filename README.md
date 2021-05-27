@@ -11,4 +11,4 @@ After downloading from the repository, install the npm packages:
 
 To start the dev server: 
 
-### `nodemon app.js`
+### `npm run dev`
