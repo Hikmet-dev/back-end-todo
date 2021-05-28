@@ -2,7 +2,7 @@ import { Router } from 'express';
 import fs from 'fs';
 import path from 'path';
 import { param, validationResult } from 'express-validator';
-
+import { ErrorHandler } from '../app.js'
 
 
 const router = Router();
@@ -20,7 +20,7 @@ router.delete('/task/:idParam',
                     return res.status(400).json({errors: errors.array(), message: "Task not found"});
                 };
 
-                fs.readFile(__dirname + '/tasks.json', 'utf-8', (err, data) => {
+                fs.readFile(__dirname + '/tasks.json', 'utf-8', async (err, data) => {
                     if (err) {
                         console.log(err);
                     }
@@ -29,7 +29,7 @@ router.delete('/task/:idParam',
 
                     const taskIndex =  taskList.findIndex(item => item.id === idParam);
                     if(taskIndex === -1) {
-                        return res.sendStatus(404);
+                        throw new ErrorHandler(403, 'Not found tasks');
                     };
 
                     const newTaskList = taskList.filter((item, index) => index !== taskIndex);

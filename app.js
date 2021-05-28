@@ -14,6 +14,21 @@ const PORT = 3000;
 app.use(express.json())
 
 
+export class ErrorHandler extends Error {
+    constructor(statusCode, message) {
+      super();
+      this.statusCode = statusCode;
+      this.message = message;
+    }
+  };
+  const handleError = (err, res) => {
+    const { statusCode, message } = err;
+    res.status(statusCode).json({
+      status: "error",
+      statusCode,
+      message
+    });
+  };
 
 
 app.use(morgan('combined'));
@@ -22,8 +37,7 @@ app.use(taskPOST);
 app.use(taskPATCH);
 app.use(taskDELETE);
 app.use((error, req, res, next) => {
-    console.log('Error status: ', error.status)
-    console.log('Message: ', error.message)
+    handleError(error, res);
   })
 
 
