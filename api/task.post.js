@@ -2,17 +2,31 @@ import express, { Router } from 'express';
 import fs from 'fs';
 import path from 'path';
 import { v4 as uuidv4 } from 'uuid';
+import bodyParser from 'body-parser';
+import { body, validationResult } from 'express-validator';
 
-
-const __dirname = path.resolve();
-const router = Router();
 const app = express();
+const router = Router();
+const urlencodedParser = bodyParser.urlencoded({extended: false});
+const __dirname = path.resolve();
 
-app.use(express.json())
 
 
-router.post('/task', (req, res) => {
+const bodyDone = body('done').isBoolean();
+const bodyName = body('name').isString().isLength({min: 3});
+
+
+
+
+router.post('/task', urlencodedParser, bodyDone, bodyName, (req, res) => {
     let body = req.body;
+
+
+
+    const errors = validationResult(req);
+    if(!errors.isEmpty()) {
+        return res.status(400).json({errors: errors.array()});
+    };
 
     const newElem = {
         id: uuidv4(),
@@ -25,7 +39,7 @@ router.post('/task', (req, res) => {
             console.log(err);
         }
 
-        const taskList = JSON.parse(data.toString());
+        const taskList = JSON.parse(data);
 
         taskList.push(newElem);
         

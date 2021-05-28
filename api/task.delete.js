@@ -7,6 +7,7 @@ const __dirname = path.resolve()
 
 router.delete('/task/:idParam/', (req, res) => {
     let idParam = req.params['idParam'];
+    console.log(idParam);
 
     fs.readFile(__dirname + '/tasks.json', 'utf-8', (err, data) => {
         if (err) {

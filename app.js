@@ -8,13 +8,10 @@ import POST  from './api/task.post.js';
 
 const app = express();
 
-import bodyParser from 'body-parser';
-var jsonParser = bodyParser.json()
-
 
 
 const PORT = 3000;
-
+app.use(express.json())
 
 
 

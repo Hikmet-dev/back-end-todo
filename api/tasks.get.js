@@ -23,7 +23,7 @@ router.get('/tasks', (req, res) => {
         const user = JSON.parse(data.toString());
 
 
-        const newUser = user.filter(data =>  filterBy ? data.done.toString() === filterBy : data )
+        const newUser = user.filter(data =>  filterBy ? data.done === filterBy : data )
                             .slice((page - 1) * 5, page * 5)
                             .sort((a, b) => order === 'asc' ? Date.parse(a.created_at) - Date.parse(b.created_at) : Date.parse(b.created_at) - Date.parse(a.created_at));
 
