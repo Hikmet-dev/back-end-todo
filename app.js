@@ -1,7 +1,10 @@
 
 import express from 'express';
+import GET  from './api/tasks.get.js';
+import  DELETE  from './api/task.delete.js';
+import  PATCH  from './api/task.patch.js';
+import POST  from './api/task.post.js';
 
-import router from './router.api.js';
 
 const app = express();
 
@@ -12,6 +15,16 @@ var jsonParser = bodyParser.json()
 
 const PORT = 3000;
 
-app.use('/api/v1/',jsonParser, router);
+
+
+
+
+app.use(GET);
+app.use(POST);
+app.use(PATCH);
+app.use(DELETE);
+
+
+
 
 app.listen(PORT);

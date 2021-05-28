@@ -1,10 +1,11 @@
+import { Router } from 'express';
 import fs from 'fs';
 import path from 'path';
-
+const router = Router();
 const __dirname = path.resolve()
 
 
-export const DELETE = (req, res) => {
+router.delete('/task/:idParam/', (req, res) => {
     let idParam = req.params['idParam'];
 
     fs.readFile(__dirname + '/tasks.json', 'utf-8', (err, data) => {
@@ -26,5 +27,7 @@ export const DELETE = (req, res) => {
     })
 
 
-};
+})
 
+
+export default router;

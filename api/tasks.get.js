@@ -1,15 +1,15 @@
+import { Router } from 'express';
+
 import fs from 'fs';
 import path from 'path';
 
-const __dirname = path.resolve()
+const router = Router();
+const __dirname = path.resolve();
 
 
 
 
-
-
-
-export const GET = (req, res) => {
+router.get('/tasks', (req, res) => {
 
     let filterBy = req.query.filterBy;
     let order = req.query.order;
@@ -29,7 +29,10 @@ export const GET = (req, res) => {
 
  
         res.send(newUser);
-    })
+    });
 
 
-};
+});
+
+
+export default router;
