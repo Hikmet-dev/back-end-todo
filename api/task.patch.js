@@ -26,7 +26,6 @@ router.patch('/task/:idParam/',
         return res.status(400).json({errors: errors.array()});
     };
 
-    console.log(body);
     fs.readFile(__dirname + '/tasks.json', 'utf-8', (err, data) => {
             if (err) {
                 console.log(err);
@@ -34,6 +33,10 @@ router.patch('/task/:idParam/',
     
             const taskList = JSON.parse(data.toString());
             const index = taskList.findIndex(item => item.id === idParam);
+
+            if(index === -1) {
+                return res.sendStatus(400);
+            };
             const newObjs = {...taskList[index], ...body };
             taskList[index] = newObjs;
 
@@ -43,7 +46,7 @@ router.patch('/task/:idParam/',
                 if(err)  {
                     console.log(err);
                 }
-                res.send(`patch: ${idParam}`);
+                return res.sendStatus(200)
             });
         });
 })

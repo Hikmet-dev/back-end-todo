@@ -17,43 +17,29 @@ router.get('/tasks',
         query('taskCount').isInt().optional({checkFalsy: true}),
          (req, res) => {
 
-    const filterBy = req.query.filterBy;
-    const order = req.query.order;
-    const page = req.query.page;
-    const taskCount = req.query.taskCount;
+    const { filterBy, order, taskCount = 100, page = 1}  = req.query;
 
     const errors = validationResult(req);
     if(!errors.isEmpty()) {
-        return res.status(400).json({errors: errors.array()});
+        console.log(errors.array());
     };
-
-       
-
-    console.log((page - 1) * taskCount);
-    console.log(page * taskCount);
 
     fs.readFile(__dirname + '/tasks.json','utf-8', (err, data) => {
         if (err) {
-            console.log(err);
+            throw err.message;
         }
 
         const tasks = JSON.parse(data);
 
-        if([filterBy, order, page, taskCount].every(item => item === '' )){
-           return res.send(tasks);
-        }
-
-        const filterTasks = tasks.filter(item =>  filterBy ? item.done.toString() === filterBy : item);
-        const pageCount = Math.ceil(filterTasks.length / taskCount);
+        const filterTasksList = tasks.filter(item => filterBy ? item.done.toString() === filterBy : item);
+        
+        const pageCount = Math.ceil(filterTasksList.length / taskCount);
         const activePage = page <= pageCount ? page : pageCount;
-    
-        const filterSlice = filterTasks.slice((activePage - 1) * taskCount || undefined, activePage * taskCount || undefined); 
-        const sortTasks = filterSlice.sort((a, b) => order === 'asc' 
-                                                                ? Date.parse(b.created_at) - Date.parse(a.created_at) 
-                                                                : Date.parse(a.created_at) - Date.parse(b.created_at));
+        const sliceTasksList = filterTasksList.slice((activePage - 1) * taskCount, activePage * taskCount); 
+        const sortTasksList = sliceTasksList.sort((a, b) => Date.parse((order === "asc" ? a : b).created_at) - Date.parse((order === "asc" ? b : a).created_at));    
         
         res.send({
-            tasks: sortTasks,
+            tasks: sortTasksList,
             pageCount
         });
     });

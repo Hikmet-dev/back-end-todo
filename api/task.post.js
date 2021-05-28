@@ -2,19 +2,17 @@ import express, { Router } from 'express';
 import fs from 'fs';
 import path from 'path';
 import { v4 as uuidv4 } from 'uuid';
-import bodyParser from 'body-parser';
 import { body, validationResult } from 'express-validator';
 
 const app = express();
 const router = Router();
-const urlencodedParser = bodyParser.urlencoded({extended: false});
 const __dirname = path.resolve();
 
 
 
 
 
-router.post('/task', urlencodedParser, 
+router.post('/task', 
             body('done').isBoolean(), 
             body('name').isString().isLength({min: 3}), 
             (req, res) => {
@@ -23,7 +21,7 @@ router.post('/task', urlencodedParser,
 
             const errors = validationResult(req);
             if(!errors.isEmpty()) {
-                return res.status(400).json({errors: errors.array()});
+                return res.status(400).send({errors: errors.array()});
             };
 
             const newElem = {
@@ -45,11 +43,11 @@ router.post('/task', urlencodedParser,
                     if(err)  {
                         console.log(err);
                     }; 
+                    return res.sendStatus(201)
                 });
             });
 
-
-            res.sendStatus()
+            
 });
 
 export default router;

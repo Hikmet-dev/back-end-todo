@@ -16,25 +16,15 @@ app.use(express.json())
 
 
 
-const errorHandler = (err, req, res, next) => {
-    console.error(err.stack);
-    res.status(500);
-    res.render('error', { error: err });
-};
-
-
-
-app.post('/test/', async (req, res, next) => {
-    return next(new Error("hellor"));
-});
-
-
 app.use(morgan('combined'));
 app.use(taskGET);
 app.use(taskPOST);
 app.use(taskPATCH);
 app.use(taskDELETE);
-app.use(errorHandler);
+app.use((error, req, res, next) => {
+    console.log('Error status: ', error.status)
+    console.log('Message: ', error.message)
+  })
 
 
 

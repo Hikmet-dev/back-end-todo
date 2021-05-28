@@ -29,7 +29,7 @@ router.delete('/task/:idParam',
 
                     const taskIndex =  taskList.findIndex(item => item.id === idParam);
                     if(taskIndex === -1) {
-                        return  res.status(401).json({message: "task not found"})
+                        return res.sendStatus(404);
                     };
 
                     const newTaskList = taskList.filter((item, index) => index !== taskIndex);
