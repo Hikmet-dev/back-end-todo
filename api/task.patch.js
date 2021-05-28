@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import fs from 'fs';
 import path from 'path';
-import { body, validationResult } from 'express-validator';
+import { body, param, validationResult } from 'express-validator';
 
 
 
@@ -10,13 +10,14 @@ const __dirname = path.resolve();
 
 
 
-const bodyDone = body('done').isBoolean();
-const bodyName = body('name').isString().isLength({min: 3});
+router.patch('/task/:idParam/', 
+            body('done').isBoolean(), 
+            body('name').isString().isLength({min: 3}), 
+            param('idParam').isUUID(), 
+            (req, res) => {
 
-
-router.patch('/task/:idParam/', bodyDone, bodyName, (req, res) => {
-    let idParam = req.params['idParam'];
-    let body = req.body;
+    const idParam = req.params['idParam'];
+    const body = req.body;
 
 
 

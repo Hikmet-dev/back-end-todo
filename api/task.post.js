@@ -12,46 +12,44 @@ const __dirname = path.resolve();
 
 
 
-const bodyDone = body('done').isBoolean();
-const bodyName = body('name').isString().isLength({min: 3});
 
 
+router.post('/task', urlencodedParser, 
+            body('done').isBoolean(), 
+            body('name').isString().isLength({min: 3}), 
+            (req, res) => {
+
+            const body = req.body;
+
+            const errors = validationResult(req);
+            if(!errors.isEmpty()) {
+                return res.status(400).json({errors: errors.array()});
+            };
+
+            const newElem = {
+                id: uuidv4(),
+                ...body,
+                created_at: new Date(Date.now())
+            };
+
+            fs.readFile(__dirname + '/tasks.json', 'utf-8', (err, data) => {
+                if (err) {
+                    throw err.message
+                }
+
+                const taskList = JSON.parse(data);
+
+                taskList.push(newElem);
+                
+                fs.writeFile(__dirname + '/tasks.json', JSON.stringify(taskList, null, 2), (err) => {
+                    if(err)  {
+                        console.log(err);
+                    }; 
+                });
+            });
 
 
-router.post('/task', urlencodedParser, bodyDone, bodyName, (req, res) => {
-    let body = req.body;
-
-
-
-    const errors = validationResult(req);
-    if(!errors.isEmpty()) {
-        return res.status(400).json({errors: errors.array()});
-    };
-
-    const newElem = {
-        id: uuidv4(),
-        ...body,
-        created_at: new Date(Date.now())
-    };
-
-    fs.readFile(__dirname + '/tasks.json', 'utf-8', (err, data) => {
-        if (err) {
-            console.log(err);
-        }
-
-        const taskList = JSON.parse(data);
-
-        taskList.push(newElem);
-        
-        fs.writeFile(__dirname + '/tasks.json', JSON.stringify(taskList, null, 2), (err) => {
-            if(err)  {
-                console.log(err);
-            }; 
-        });
-    });
-
-
-    res.send('Post request task');
+            res.sendStatus()
 });
 
 export default router;
