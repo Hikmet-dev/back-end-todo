@@ -17,8 +17,6 @@ app.use(express.json())
 
 
 
-
-
 app.use(morgan('combined'));
 app.get('/', (req, res) => {
   res.send('<h1>Todo-back-end</h1>')
@@ -29,7 +27,6 @@ app.use(taskPATCH);
 app.use(taskDELETE);
 app.use((err, req, res, next) => {
     handleError(err, res);
-    next();
   })
 
 
