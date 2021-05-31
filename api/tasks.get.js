@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { query, validationResult } from 'express-validator';
-import { ErrorHandler } from '../app.js'
+import { ErrorHandler } from '../errors.js';
 
 import fs from 'fs';
 import path from 'path';

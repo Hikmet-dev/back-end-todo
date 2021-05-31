@@ -2,7 +2,7 @@ import { Router } from 'express';
 import fs from 'fs';
 import path from 'path';
 import { param, validationResult } from 'express-validator';
-import { ErrorHandler } from '../app.js'
+import { ErrorHandler } from '../errors.js';
 
 
 const router = Router();

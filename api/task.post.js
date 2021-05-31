@@ -3,6 +3,8 @@ import fs from 'fs';
 import path from 'path';
 import { v4 as uuidv4 } from 'uuid';
 import { body, validationResult } from 'express-validator';
+import { ErrorHandler } from '../errors.js';
+
 
 const app = express();
 const router = Router();
