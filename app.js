@@ -27,6 +27,7 @@ app.use(taskPATCH);
 app.use(taskDELETE);
 app.use((err, req, res, next) => {
     handleError(err, res);
+    next();
   })
 
 
