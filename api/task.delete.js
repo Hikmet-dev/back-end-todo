@@ -11,16 +11,17 @@ const __dirname = path.resolve()
 
 router.delete('/task/:idParam', 
             param('idParam').isUUID(), 
-            (req, res) => {
+            (req, res, next) => {
 
                 const idParam = req.params.idParam;
 
                 const errors = validationResult(req);
                 if(!errors.isEmpty()) {
-                    return res.status(400).json({errors: errors.array(), message: "Task not found"});
+                    const error = new ErrorHandler(422, 'Invalid fields in request', errors.array());
+                    return next(error);
                 };
 
-                fs.readFile(__dirname + '/tasks.json', 'utf-8', async (err, data) => {
+                fs.readFile(__dirname + '/tasks.json', 'utf-8', (err, data) => {
                     if (err) {
                         console.log(err);
                     }
@@ -29,7 +30,8 @@ router.delete('/task/:idParam',
 
                     const taskIndex =  taskList.findIndex(item => item.id === idParam);
                     if(taskIndex === -1) {
-                        throw new ErrorHandler(403, 'Not found tasks');
+                        const error = new ErrorHandler(400, "Task not found")
+                        return next(error)
                     };
 
                     const newTaskList = taskList.filter((item, index) => index !== taskIndex);
@@ -38,10 +40,9 @@ router.delete('/task/:idParam',
                         if(err)  {
                             console.log(err);
                         }
-                        res.send(`Delete: ${idParam}`)
+                        return res.sendStatus(200);
                     })
                 });
-
 
 });
 

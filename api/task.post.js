@@ -15,13 +15,14 @@ const __dirname = path.resolve();
 router.post('/task', 
             body('done').isBoolean(), 
             body('name').isString().isLength({min: 3}), 
-            (req, res) => {
+            (req, res, next) => {
 
             const body = req.body;
 
             const errors = validationResult(req);
             if(!errors.isEmpty()) {
-                return res.status(400).send({errors: errors.array()});
+                const error = new ErrorHandler(422, 'Invalid fields in request', errors.array());
+                return next(error);
             };
 
             const newElem = {

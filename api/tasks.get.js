@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { query, validationResult } from 'express-validator';
+import { ErrorHandler } from '../app.js'
 
 import fs from 'fs';
 import path from 'path';
@@ -15,18 +16,19 @@ router.get('/tasks',
         query('order').isString().optional({checkFalsy: true}),
         query('page').isInt().optional({checkFalsy: true}),
         query('taskCount').isInt().optional({checkFalsy: true}),
-         (req, res) => {
+         (req, res, next) => {
 
     const { filterBy, order, taskCount = 100, page = 1}  = req.query;
 
     const errors = validationResult(req);
     if(!errors.isEmpty()) {
-        console.log(errors.array());
+        const error = new ErrorHandler(422, 'Invalid fields in request', errors.array());
+        return next(error);
     };
 
     fs.readFile(__dirname + '/tasks.json','utf-8', (err, data) => {
         if (err) {
-            throw err.message;
+            console.log(err);   
         }
 
         const tasks = JSON.parse(data);
@@ -38,7 +40,7 @@ router.get('/tasks',
         const sliceTasksList = filterTasksList.slice((activePage - 1) * taskCount, activePage * taskCount); 
         const sortTasksList = sliceTasksList.sort((a, b) => Date.parse((order === "asc" ? a : b).created_at) - Date.parse((order === "asc" ? b : a).created_at));    
         
-        res.send({
+        return res.send({
             tasks: sortTasksList,
             pageCount
         });

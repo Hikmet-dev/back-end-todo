@@ -15,20 +15,23 @@ app.use(express.json())
 
 
 export class ErrorHandler extends Error {
-    constructor(statusCode, message) {
+    constructor(statusCode, message, stack) {
       super();
       this.statusCode = statusCode;
       this.message = message;
+      this.stack = stack;
     }
   };
-  const handleError = (err, res) => {
-    const { statusCode, message } = err;
-    res.status(statusCode).json({
-      status: "error",
-      statusCode,
-      message
-    });
-  };
+
+const handleError = (err, res) => {
+  const { statusCode, message, stack } = err;
+  res.status(statusCode).json({
+    status: "error",
+    statusCode,
+    message,
+    stack
+  });
+};
 
 
 app.use(morgan('combined'));
@@ -36,8 +39,9 @@ app.use(taskGET);
 app.use(taskPOST);
 app.use(taskPATCH);
 app.use(taskDELETE);
-app.use((error, req, res, next) => {
-    handleError(error, res);
+app.use((err, req, res, next) => {
+    handleError(err, res);
+    next();
   })
 
 
