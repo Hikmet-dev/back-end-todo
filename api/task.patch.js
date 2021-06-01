@@ -17,7 +17,7 @@ router.patch('/task/:idParam/',
             body('name').isString().isLength({min: 3}), 
             param('idParam').isUUID(), 
             (req, res, next) => {
-
+try{
     const idParam = req.params['idParam'];
     const body = req.body;
 
@@ -25,11 +25,11 @@ router.patch('/task/:idParam/',
 
     const errors = validationResult(req);
     if(!errors.isEmpty()) {
-        const error = new ErrorHandler(422, 'Invalid fields in request', errors.array());
-        return next(error);
+        throw new ErrorHandler(422, 'Invalid fields in request', errors.array());
     };
 
     fs.readFile(__dirname + '/tasks.json', 'utf-8', (err, data) => {
+        try{
             if (err) {
                 console.log(err);
             }
@@ -38,21 +38,26 @@ router.patch('/task/:idParam/',
             const index = taskList.findIndex(item => item.id === idParam);
 
             if(index === -1) {
-                const error = new ErrorHandler(400, "Task not found")
-                return next(error)
+               throw new ErrorHandler(400, "Task not found")
             };
             const newObjs = {...taskList[index], ...body };
             taskList[index] = newObjs;
 
-            
-
+        } catch (error) {
+            next(error);
+        }
+           
             fs.writeFile(__dirname + '/tasks.json', JSON.stringify(taskList, null, 2), (err) => {
-                if(err)  {
-                    console.log(err);
-                }
-                return res.sendStatus(200)
+                    if(err)  {
+                        console.log(err);
+                    }
+                    return res.sendStatus(200)
             });
         });
-})
+    } catch (error) {
+        next(error);
+    };
+
+});
 
 export default router;

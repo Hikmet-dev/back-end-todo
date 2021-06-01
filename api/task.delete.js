@@ -3,7 +3,6 @@ import fs from 'fs';
 import path from 'path';
 import { param, validationResult } from 'express-validator';
 import { ErrorHandler } from '../errors.js';
-import { nextTick } from 'process';
 
 
 const router = Router();
@@ -22,26 +21,34 @@ router.delete('/task/:idParam',
                 };
 
                 fs.readFile(__dirname + '/tasks.json', 'utf-8', (err, data) => {
-                    if (err) {
-                        throw new ErrorHandler(404, 'not found file')
-                    };
 
-                    const taskList = JSON.parse(data.toString());
+                    try{
+                        if (err) {
+                            throw new ErrorHandler(404, 'not found file')
+                        };
+                        const taskList = JSON.parse(data.toString());
 
                     const taskIndex =  taskList.findIndex(item => item.id === idParam);
                     if(taskIndex === -1) { 
                         throw new ErrorHandler(400, "Task not found");
                         
                     }; 
-
                     const newTaskList = taskList.filter((item, index) => index !== taskIndex);
-                    
+
                     fs.writeFile(__dirname + '/tasks.json', JSON.stringify(newTaskList, null, 2), (err) => {
-                        if(err)  {
-                            console.log(err);
-                        };
-                        return res.sendStatus(200);
+                        try {
+                            if(err)  {
+                                console.log(err);
+                                throw new ErrorHandler(404, 'Invalid fields in request', err);
+                            };
+                            return res.sendStatus(200);
+                        } catch (error) {
+                            next(error)
+                        }
                     })
+                    } catch(error){
+                        next(error)
+                    };
                 });
             } catch (error) {
                 next(error)

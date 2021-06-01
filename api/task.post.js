@@ -18,37 +18,42 @@ router.post('/task',
             body('done').isBoolean(), 
             body('name').isString().isLength({min: 3}), 
             (req, res, next) => {
+            try{
+                const body = req.body;
 
-            const body = req.body;
-
-            const errors = validationResult(req);
-            if(!errors.isEmpty()) {
-                const error = new ErrorHandler(422, 'Invalid fields in request', errors.array());
-                return next(error);
-            };
-
-            const newElem = {
-                id: uuidv4(),
-                ...body,
-                created_at: new Date(Date.now())
-            };
-
-            fs.readFile(__dirname + '/tasks.json', 'utf-8', (err, data) => {
-                if (err) {
-                    throw err.message
-                }
-
-                const taskList = JSON.parse(data);
-
-                taskList.push(newElem);
+                const errors = validationResult(req);
                 
-                fs.writeFile(__dirname + '/tasks.json', JSON.stringify(taskList, null, 2), (err) => {
-                    if(err)  {
-                        console.log(err);
-                    }; 
-                    return res.sendStatus(201)
+                if(!errors.isEmpty()) {
+                    throw new ErrorHandler(422, 'Invalid fields in request', errors.array());
+                };
+    
+                const newElem = {
+                    id: uuidv4(),
+                    ...body,
+                    created_at: new Date(Date.now())
+                };
+    
+                fs.readFile(__dirname + '/tasks.json', 'utf-8', (err, data) => {
+                    if (err) {
+                        throw err.message
+                    }
+    
+                    const taskList = JSON.parse(data);
+    
+                    taskList.push(newElem);
+                    
+                    fs.writeFile(__dirname + '/tasks.json', JSON.stringify(taskList, null, 2), (err) => {
+                        if(err)  {
+                            console.log(err);
+                        }; 
+                        return res.sendStatus(201)
+                    });
                 });
-            });
+            } catch (error) {
+                next(error);
+            }
+
+
 
             
 });
